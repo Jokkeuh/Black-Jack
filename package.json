@@ -1,0 +1,21 @@
+{
+  "dependencies": {
+    "test": "^3.0.1"
+  },
+  
+  "name": "black-jack",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "devDependencies": {
+    "jest": "^28.1.2",
+    "webpack": "^5.73.0"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+  
+}
