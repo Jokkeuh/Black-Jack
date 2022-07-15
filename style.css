@@ -1,0 +1,60 @@
+.container{
+    border: 1px solid black;
+    display: grid;
+    height: 40rem;
+}
+
+
+#bank{
+    border: 1px solid red;
+    height: 200px;
+    
+}
+
+#player{
+    border: 1px solid green;
+    height: 200px;
+    grid-row: 3/4;
+    
+}
+
+#deck{
+    position: relative;
+    border: 1px solid yellow;
+    height: 150px;
+    width: 250px;
+    margin: 15px;
+}
+
+#runningCount{
+    position:absolute;
+    height: 50px;
+    width: 50px;
+    border: 1px solid purple;
+    right: 1rem;
+}
+
+#hit{
+        position: absolute;
+        top: 25rem;
+        left: 5rem;
+        
+}
+#miss{
+        position: absolute;
+        top: 25rem;
+        left: 10rem;
+        border: 3px solid red;
+        border-radius: 10px;
+        
+}
+#newCard{
+    position: relative;
+    border: 2px solid green;
+    float: left;
+    width: 80px;
+    height: 150px;
+    margin: 7px;
+    border-radius: 3%;
+    
+}

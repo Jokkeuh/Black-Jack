@@ -5,6 +5,45 @@ const cards = ["2","3","4","5","6","7","8","9","10","J","Q","K","A"];
 const colors = ["Spades","Hearts","Diamonds","Clubs"];
 let deck = [];
 let board = [];
+let count = 0; 
+
+
+
+
+const bankContainer = document.getElementById("bank")
+const stayBtn = document.getElementById("miss")
+const runningCountContainer = document.getElementById("runningCount")
+const container = document.getElementById("container")
+const hitBtn = document.getElementById("hit")
+
+hitBtn.addEventListener("click", () =>{
+    PlayerHand("hit")
+    displayCount()
+    
+})
+stayBtn.addEventListener("click", () =>{
+    PlayerHand("miss")
+    
+})
+
+const displayDeck = () => {
+    const deckContainer = document.getElementById("deck")
+    deckContainer.innerHTML = deck.length
+    
+}
+const displayPlayerHand = (hand) => {
+    const cards = document.getElementById("playerCards");    
+    let newCard = document.createElement("div")
+    newCard.setAttribute("id","newCard")
+    newCard.setAttribute("class","newCard")
+    newCard.innerHTML = hand[hand.length -1].Value
+    cards.appendChild(newCard)
+
+}
+
+
+
+
 
 class Player{
     constructor(name){
@@ -35,52 +74,79 @@ const CreateDeck = ()=>{
 
             let card = { Value: cards[i], Color: colors[j], CardValue: value};           
             deck.push(card)
+            
         }
         
     }
     return deck
 }
-
-
-const valueCounter =()=>{
+const displayCount = () =>{
+    const currentCount = document.getElementById("currentScore")
     
-    let count = 0;
-    hand.forEach(card => {
-       count += card.CardValue
-       
-    });
-
-    if(count >= 22){
-        hand.length = 0
-        console.log("bust")
-        return
+    winCondition(count)
+    for(let i = hand.length-1; i < hand.length; i++ ){
+        count += hand[i].CardValue 
     }
-    console.log(count)
-    return count
+    winCondition(count)
+        currentCount.innerHTML = count
+        //currentCount.innerHTML = temp + hand[hand.length - 1].CardValue
+    
     
 }
 
+const valueCheck =()=>{
+    if(hand[0] == undefined){
+       console.log('First count')
+    }    
+}
 
 
+const winCondition = () =>{
+    const cards = document.getElementById("playerCards")
+    if(count == 21){
+        
+        console.log(hand)
+        alert("BLACKJACK")
+        
+        
+            cards.innerHTML ="";
+            hand.length = 0
+            count = 0
+
+        prompt("BLACKJACK")
+       
+        console.log("BLACKJACK")
+        
+        
+    }
+    if(count >= 22){
+        
+        console.log("bust")
+        count = 0
+        cards.innerHTML ="";
+        hand.length = 0
+        
+    }
+    
+}
 
 const PlayerHand =(nextMove)=>{
-    valueCounter()
         if(nextMove === 'hit'){
             let currentHand =  drawCard().drawnCard
             hand.push(currentHand)
+            displayDeck()
+            displayPlayerHand(hand)
         }
         if(nextMove === 'pass'){
             hand.length = 0
         }
-        
-        
-        
         return hand
-    
 }
 
 
 const drawCard = () =>{
+
+    valueCheck()
     if(deck.length < 1){
         console.log("next deck");
         CreateDeck()
@@ -124,5 +190,6 @@ const getRunningCount = (drawnCard) =>{
     if(drawnCard.CardValue >= 10){
         runningCount = runningCount-1;
     }
+    runningCountContainer.innerHTML = runningCount
     
 }
