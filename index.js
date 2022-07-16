@@ -6,6 +6,9 @@ const colors = ["Spades","Hearts","Diamonds","Clubs"];
 let deck = [];
 let board = [];
 let count = 0; 
+let bankCount = 0;
+let dealerTurn = false;
+
 
 
 
@@ -16,14 +19,36 @@ const runningCountContainer = document.getElementById("runningCount")
 const container = document.getElementById("container")
 const hitBtn = document.getElementById("hit")
 
+class Player{
+    constructor(name){
+        this.name = name;
+        this.hand = []
+        return this.Player
+    }
+}
+
+class Bank{
+    constructor(name){
+        this.name = name;
+        this.hand = []
+        return this.Bank
+    }
+}
+
+
+const player = new Player('playerOne')
+const hand = player.hand
+const banker = new Bank('bankOne')
+const bankerHand = banker.hand
+
 hitBtn.addEventListener("click", () =>{
     PlayerHand("hit")
-    displayCount()
-    
+    displayCount(hand)
 })
 stayBtn.addEventListener("click", () =>{
-    PlayerHand("miss")
-    
+    PlayerHand("pass")
+    DealerHand()
+    displayBankCount(bankerHand)    
 })
 
 const displayDeck = () => {
@@ -40,21 +65,21 @@ const displayPlayerHand = (hand) => {
     cards.appendChild(newCard)
 
 }
+const displayBankHand = (bankerHand) => {
+    const cards = document.getElementById("bankerCards");    
+    let newCard = document.createElement("div")
+    newCard.setAttribute("id","newBankCard")
+    newCard.setAttribute("class","newBankCard")
+    newCard.innerHTML = bankerHand[bankerHand.length -1].Value
+    cards.appendChild(newCard)
 
-
-
-
-
-class Player{
-    constructor(name){
-        this.name = name;
-        this.hand = []
-        return this.Player
-    }
 }
 
-const player = new Player('playerOne')
-const hand = player.hand
+
+
+
+
+
 
 
 
@@ -80,28 +105,37 @@ const CreateDeck = ()=>{
     }
     return deck
 }
-const displayCount = () =>{
+const displayCount = (hands) =>{
     const currentCount = document.getElementById("currentScore")
-    
-    winCondition(count)
-    for(let i = hand.length-1; i < hand.length; i++ ){
-        count += hand[i].CardValue 
+    winCondition()
+    for(let i = hands.length-1; i < hands.length; i++ ){
+        count += hands[i].CardValue 
     }
-    winCondition(count)
+    winCondition()
         currentCount.innerHTML = count
-        //currentCount.innerHTML = temp + hand[hand.length - 1].CardValue
-    
-    
+}
+
+const displayBankCount = (hands)=>{
+    const currentBankScore = document.getElementById("bankScore")
+   
+   
+    for(let i = hands.length-1; i < hands.length; i++ ){
+        bankCount += hands[i].CardValue 
+    }
+        currentBankScore.innerHTML = bankCount
 }
 
 const valueCheck =()=>{
-    if(hand[0] == undefined){
+    if(hand[0] == undefined || bankerHand[0] == undefined){
        console.log('First count')
     }    
 }
 
 
 const winCondition = () =>{
+    if(dealerTurn === true){
+        return
+    }
     const cards = document.getElementById("playerCards")
     if(count == 21){
         
@@ -113,7 +147,7 @@ const winCondition = () =>{
             hand.length = 0
             count = 0
 
-        prompt("BLACKJACK")
+        
        
         console.log("BLACKJACK")
         
@@ -131,16 +165,48 @@ const winCondition = () =>{
 }
 
 const PlayerHand =(nextMove)=>{
-        if(nextMove === 'hit'){
-            let currentHand =  drawCard().drawnCard
+        if(nextMove == 'hit'){
+            dealerTurn = false
+            let currentHand = drawCard().drawnCard
             hand.push(currentHand)
             displayDeck()
             displayPlayerHand(hand)
+            return dealerTurn
+            
         }
-        if(nextMove === 'pass'){
-            hand.length = 0
+        if(nextMove =='pass'){
+            dealerTurn = true
+            return dealerTurn
         }
         return hand
+}
+
+const DealerHand = ()=>{
+        let currentHand = drawCard().drawnCard
+        const bankerCards = document.getElementById('bankerCards')
+     
+
+        if (bankCount == 21 ) {
+            bankCount = 0
+            bankerHand.length = 0
+            console.log("BlackJack")
+            bankerCards.innerHTML = "BlackJack"
+        }
+
+        if (bankCount > 21 ) {
+            bankCount = 0
+            console.log("21")
+            bankerHand.length = 0
+            bankerCards.innerHTML = ""
+        }    
+        bankerHand.push(currentHand)
+        displayDeck()
+        displayBankHand(bankerHand)
+        
+
+        
+        return bankCount
+
 }
 
 
