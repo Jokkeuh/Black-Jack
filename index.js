@@ -42,13 +42,14 @@ const banker = new Bank('bankOne')
 const bankerHand = banker.hand
 
 hitBtn.addEventListener("click", () =>{
-    PlayerHand("hit")
+    isAce()
+    passOrHit("hit")
     displayCount(hand)
 })
 stayBtn.addEventListener("click", () =>{
-    PlayerHand("pass")
-    DealerHand()
-    displayBankCount(bankerHand)    
+    isAce()
+    passOrHit("pass")
+    displayBankCount(bankerHand)   
 })
 
 const displayDeck = () => {
@@ -74,14 +75,36 @@ const displayBankHand = (bankerHand) => {
     cards.appendChild(newCard)
 
 }
+const isAce = () =>{
+    for(let i = 0; i < hand.length; i++){
+        if(hand[i].Value == "A"){
 
+            if(count > 22){
+                const currentCount = document.getElementById("currentScore")
+                count = count - 10
+                currentCount.innerHTML = count
 
+                return count
+            }
+            console.log("PLAYER HAS ACE");
+        }
+    }
+    
+    for(let i = 0; i < bankerHand.length; i++){
+        if(bankerHand[i].Value == "A"){
+            if(bankCount > 22){
+                const currentBankScore = document.getElementById("bankScore")
 
+                bankCount = bankCount - 10
+                currentBankScore.innerHTML = bankCount
 
-
-
-
-
+                return bankCount
+            }
+            console.log("DEALER HAS ACE");
+            
+        }
+    }
+}
 
 const CreateDeck = ()=>{
     deck = new Array();
@@ -105,20 +128,20 @@ const CreateDeck = ()=>{
     }
     return deck
 }
+
 const displayCount = (hands) =>{
     const currentCount = document.getElementById("currentScore")
     winCondition()
     for(let i = hands.length-1; i < hands.length; i++ ){
-        count += hands[i].CardValue 
+        count += hands[i].CardValue
     }
     winCondition()
         currentCount.innerHTML = count
 }
 
+
 const displayBankCount = (hands)=>{
     const currentBankScore = document.getElementById("bankScore")
-   
-   
     for(let i = hands.length-1; i < hands.length; i++ ){
         bankCount += hands[i].CardValue 
     }
@@ -128,14 +151,11 @@ const displayBankCount = (hands)=>{
 const valueCheck =()=>{
     if(hand[0] == undefined || bankerHand[0] == undefined){
        console.log('First count')
-    }    
+    }
+    winCondition()
 }
 
-
 const winCondition = () =>{
-    if(dealerTurn === true){
-        return
-    }
     const cards = document.getElementById("playerCards")
     if(count == 21){
         
@@ -147,11 +167,7 @@ const winCondition = () =>{
             hand.length = 0
             count = 0
 
-        
-       
         console.log("BLACKJACK")
-        
-        
     }
     if(count >= 22){
         
@@ -159,18 +175,35 @@ const winCondition = () =>{
         count = 0
         cards.innerHTML ="";
         hand.length = 0
-        
     }
     
 }
 
-const PlayerHand =(nextMove)=>{
+
+const passOrHit = (nextMove) =>{
+    if(nextMove == 'hit'){
+        PlayerHand()
+        displayDeck()
+        displayPlayerHand(hand)
+        //return dealerTurn
+    }
+    if(nextMove == "pass"){
+        DealerHand()
+        displayDeck()
+        displayBankHand(bankerHand)
+    }
+
+
+}
+/*const PlayerHandtemp =(nextMove)=>{
+    // split into two functions, PlayerHand(like Dealerhand) and PlayerDecision
         if(nextMove == 'hit'){
             dealerTurn = false
             let currentHand = drawCard().drawnCard
             hand.push(currentHand)
             displayDeck()
             displayPlayerHand(hand)
+            
             return dealerTurn
             
         }
@@ -179,6 +212,31 @@ const PlayerHand =(nextMove)=>{
             return dealerTurn
         }
         return hand
+}*/
+
+const PlayerHand =()=>{
+    // split into two functions, PlayerHand(like Dealerhand) and PlayerDecision
+    let currentHand = drawCard().drawnCard
+    const playerCards = document.getElementById('playerCards')
+
+    
+        if(count == 21){
+            count = 0
+            hand.length = 0
+            console.log("BlackJack")
+            bankerCards.innerHTML = "BlackJack"
+            
+            
+        }
+        if (count > 21 ) {
+            count = 0
+            hand.length = 0
+            console.log("BUSTER")
+            playerCards.innerHTML = ""
+        } 
+        hand.push(currentHand)
+        displayDeck()
+        
 }
 
 const DealerHand = ()=>{
@@ -195,20 +253,19 @@ const DealerHand = ()=>{
 
         if (bankCount > 21 ) {
             bankCount = 0
-            console.log("21")
+            console.log("BUSTER")
             bankerHand.length = 0
             bankerCards.innerHTML = ""
         }    
         bankerHand.push(currentHand)
         displayDeck()
-        displayBankHand(bankerHand)
+        
         
 
         
         return bankCount
 
 }
-
 
 const drawCard = () =>{
 
@@ -227,16 +284,6 @@ const drawCard = () =>{
 
     
     return {drawnCard, deck, runningCount, board}
-}
-
-const createHands = () => {
-    // amount of players
-    // bank hand ***
-    // amount of decks
-    // amount of cards
-    // amount of games
-    // if hit -> take a card ***
-    // if pass -> bank takes card ***
 }
 
 let runningCount = 0
